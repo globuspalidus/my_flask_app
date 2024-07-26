@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de Consommation de Glucides</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/static/running.jpg') no-repeat center center / cover;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            box-sizing: border-box;
+            z-index: 2;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .total-carbs {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .list-group-item {
+            background-color: transparent;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            white-space: nowrap; /* Maintient le texte sur une ligne */
+        }
+        .list-group-item i {
+            margin-right: 10px;
+        }
+        .list-group-item span {
+            flex-grow: 1;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+            }
+            .container {
+                max-width: 100%;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Calculateur de Glucides</h1>
+        <h2 class="total-carbs">Total des glucides recommandés : <span class="badge badge-primary">{{ total_carbs_recommended }} g</span></h2>
+
+        <h3>Plus en détail</h3>
+        <ul class="list-group">
+            <li class="list-group-item"><i class="fas fa-stopwatch"></i><span>Glucides nécessaires par heure :</span> {{ total_carbs }} g/h</li>
+            <li class="list-group-item"><i class="fas fa-cube"></i><span>Glucose recommandé :</span> {{ glucose }} g/h</li>
+            <li class="list-group-item"><i class="fas fa-apple-alt"></i><span>Fructose recommandé :</span> {{ fructose }} g/h</li>
+            <li class="list-group-item"><i class="fas fa-tint"></i><span>Glucides sous forme liquide :</span> {{ liquid_carbs }} g/h</li>
+            <li class="list-group-item"><i class="fas fa-bread-slice"></i><span>Glucides sous forme solide :</span> {{ solid_carbs }} g/h</li>
+        </ul>
+
+        <a href="/" class="btn btn-primary mt-4">Retour</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

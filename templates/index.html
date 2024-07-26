@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Glucides</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/static/running.jpg') no-repeat center center / cover;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.6); /* Opacité réduite ici */
+            color: white;
+            box-sizing: border-box;
+            z-index: 2;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .btn-group-toggle .btn {
+            border-radius: 0;
+            height: 50px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .slider-output {
+            font-size: 1rem;
+            text-align: center;
+            margin-top: -10px;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+            }
+            .container {
+                max-width: 100%;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Calculateur de Glucides</h1>
+        <form id="carbForm" method="POST" action="/result">
+            <div class="form-group">
+                <label for="sex">Sexe</label>
+                <div class="btn-group btn-group-toggle d-flex" data-toggle="buttons">
+                    <label class="btn btn-outline-light flex-fill">
+                        <input type="radio" name="sex" id="male" value="Homme" autocomplete="off" required> Homme
+                    </label>
+                    <label class="btn btn-outline-light flex-fill">
+                        <input type="radio" name="sex" id="female" value="Femme" autocomplete="off" required> Femme
+                    </label>
+                </div>
+            </div>
+            <div class="form-group slider-container">
+                <label for="weight">Poids (kg)</label>
+                <input type="range" id="weight" name="weight" min="50" max="100" value="70" step="1" class="form-control-range" oninput="document.getElementById('weightValue').innerHTML = this.value;">
+                <div class="slider-label">
+                    <span>50 kg</span><span id="weightValue">70</span><span>100 kg</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="body_type">Morphologie</label>
+                <div class="btn-group btn-group-toggle d-flex" data-toggle="buttons">
+                    <label class="btn btn-outline-light flex-fill">
+                        <input type="radio" name="body_type" id="mince" value="mince" autocomplete="off" required> Mince
+                    </label>
+                    <label class="btn btn-outline-light flex-fill">
+                        <input type="radio" name="body_type" id="muscle" value="musclé" autocomplete="off" required> Musclé
+                    </label>
+                    <label class="btn btn-outline-light flex-fill">
+                        <input type="radio" name="body_type" id="embonpoint" value="embonpoint" autocomplete="off" required> Embonpoint
+                    </label>
+                </div>
+            </div>
+            <div class="form-group slider-container">
+                <label for="intensity">Intensité de l'effort (1-5)</label>
+                <input type="range" id="intensity" name="intensity" min="1" max="5" value="3" step="1" class="form-control-range" oninput="document.getElementById('intensityValue').innerHTML = this.value;">
+                <div class="slider-label">
+                    <span>1</span><span id="intensityValue">3</span><span>5</span>
+                </div>
+            </div>
+            <div class="form-group slider-container">
+                <label for="duration_minutes">Durée de l'effort (minutes)</label>
+                <input type="range" id="duration_minutes" name="duration_minutes" min="60" max="600" value="90" step="15" class="form-control-range" oninput="updateDuration(this.value);">
+                <div class="slider-label">
+                    <span>60 min</span><span>600 min</span>
+                </div>
+                <div class="slider-output">
+                    <span id="durationValue">90</span> min (<span id="durationOutput">1h 30min</span>)
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="activity_type">Type d'activité</label>
+                <select id="activity_type" name="activity_type" class="form-control custom-select" required>
+                    <option value="" selected disabled>Choisir...</option>
+                    <option>Course</option>
+                    <option>Cyclisme</option>
+                    <option>Natation</option>
+                    <option>Ski de fond</option>
+                    <option>Trail</option>
+                    <option>VTT</option>
+                    <option>Triathlon</option>
+                </select>
+            </div>
+            <div class="form-group slider-container">
+                <label for="age">Âge</label>
+                <input type="range" id="age" name="age" min="18" max="65" value="30" step="1" class="form-control-range" oninput="document.getElementById('ageValue').innerHTML = this.value;">
+                <div class="slider-label">
+                    <span>18</span><span id="ageValue">30</span><span>65</span>
+                </div>
+            </div>
+            <button type="submit" id="submitButton" class="btn btn-primary btn-lg btn-block" disabled>Calculer</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function updateDuration(minutes) {
+            document.getElementById('durationValue').innerHTML = minutes;
+            var hours = Math.floor(minutes / 60);
+            var mins = minutes % 60;
+            document.getElementById('durationOutput').innerHTML = `${hours}h ${mins}min`;
+        }
+        $(document).ready(function(){
+            $('#carbForm input, #carbForm select').on('input change', function() {
+                let isValid = true;
+                $('#carbForm input, #carbForm select').each(function() {
+                    if ($(this).val() === '' || $(this).val() === null) {
+                        isValid = false;
+                    }
+                });
+                $('#submitButton').prop('disabled', !isValid);
+            });
+        });
+    </script>
+</body>
+</html>
